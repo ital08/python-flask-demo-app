@@ -82,17 +82,69 @@ B. **kind: Deployment**: Define el tipo de recurso que se está creando. En este
 
 C. **metadata**: Contiene datos que identifican el Deployment, como su nombre.
 
-    ````yaml
-    metadata:
-    name: flask-app-deployment
-    ```
+```bash
+ metadata:
+ name: flask-app-deployment
+```
 
 D. **spec**: Especifica los detalles del Deployment.
 
 - replicas: Define el número de réplicas (pods) que se deben ejecutar para esta aplicación. Aquí está configurado para 2 réplicas.
+
+```bash
+ replicas: 2
+```
+
 - selector: Define cómo seleccionar los pods que son administrados por este Deployment mediante etiquetas.
+
+```bash
+ selector:
+  matchLabels:
+    app: flask-app
+```
+
 - template: Describe el contenido de los pods que se crearán.
+
+```bash
+ template:
+  metadata:
+    labels:
+      app: flask-app
+  spec:
+    containers:
+    - name: flask-app
+      image: mycontainerregistry.azurecr.io/flask-app:latest
+      ports:
+      - containerPort: 80
+      env:
+      - name: USERNAME
+        valueFrom:
+          secretKeyRef:
+            name: mysecret
+            key: username
+      - name: PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: mysecret
+            key: password
+```
+
 - metadata: Contiene las etiquetas para los pods que se crean.
+
+```bash
+metadata:
+  labels:
+    app: flask-app
+```
+
+- spec: Contiene los detalles específicos del contenedor dentro del pod.
+
+      -  containers: Define una lista de contenedores que se ejecutarán en los pods. En este caso, solo hay un contenedor.
+
+      -  name: Nombre del contenedor.
+      -  image: Especifica la imagen del contenedor que se utilizará.
+      -  ports: Expone los puertos del contenedor. Aquí se expone el puerto 80.
+      -  env: Define las variables de entorno que se pasan al contenedor. Aquí se obtienen valores de secretos de Kubernetes.
 
 Crea un archivo deployment.yaml con el siguiente contenido:
 
@@ -104,29 +156,29 @@ name: flask-app-deployment
 spec:
 replicas: 2
 selector:
- matchLabels:
-   app: flask-app
+matchLabels:
+app: flask-app
 template:
- metadata:
-   labels:
-     app: flask-app
- spec:
-   containers:
-   - name: flask-app
-     image: mycontainerregistry.azurecr.io/flask-app:latest
-     ports:
-     - containerPort: 80
-     env:
-     - name: USERNAME
-       valueFrom:
-         secretKeyRef:
-           name: mysecret
-           key: username
-     - name: PASSWORD
-       valueFrom:
-         secretKeyRef:
-           name: mysecret
-           key: password
+metadata:
+labels:
+  app: flask-app
+spec:
+containers:
+- name: flask-app
+  image: mycontainerregistry.azurecr.io/flask-app:latest
+  ports:
+  - containerPort: 80
+  env:
+  - name: USERNAME
+    valueFrom:
+      secretKeyRef:
+        name: mysecret
+        key: username
+  - name: PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: mysecret
+        key: password
 ---
 apiVersion: v1
 kind: Service
@@ -137,7 +189,7 @@ type: LoadBalancer
 ports:
 - port: 80
 selector:
- app: flask-app
+app: flask-app
 ```
 
 Aplica el deployment:
