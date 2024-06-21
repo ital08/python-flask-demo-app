@@ -75,7 +75,7 @@ az aks get-credentials --resource-group <myResourceGroup> --name <myAKSCluster><
 ### 9. Crear un secreto en Kubernetes
 
 ```bash
-kubectl create secret generic mysecret --from-literal=username=myuser --from-literal=password=mypassword
+kubectl create secret generic <mysecret> --from-literal=username=myuser --from-literal=password=mypassword
 ```
 
 ### 10. Desplegar la aplicación en AKS
@@ -123,19 +123,19 @@ D. **spec**: Especifica los detalles del Deployment.
   spec:
     containers:
     - name: flask-app
-      image: mycontainerregistry.azurecr.io/flask-app:latest
+      image: <mycontainerregistry>.azurecr.io/flask-app:latest
       ports:
       - containerPort: 80
       env:
       - name: USERNAME
         valueFrom:
           secretKeyRef:
-            name: mysecret
+            name: <mysecret>
             key: username
       - name: PASSWORD
         valueFrom:
           secretKeyRef:
-            name: mysecret
+            name: <mysecret>
             key: password
 ```
 
@@ -175,19 +175,19 @@ labels:
 spec:
 containers:
 - name: flask-app
-  image: mycontainerregistry.azurecr.io/flask-app:latest
+  image: <mycontainerregistry>.azurecr.io/flask-app:latest
   ports:
   - containerPort: 80
   env:
   - name: USERNAME
     valueFrom:
       secretKeyRef:
-        name: mysecret
+        name: <mysecret>
         key: username
   - name: PASSWORD
     valueFrom:
       secretKeyRef:
-        name: mysecret
+        name: <mysecret>
         key: password
 ---
 apiVersion: v1
