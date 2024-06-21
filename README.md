@@ -82,10 +82,13 @@ B. **kind: Deployment**: Define el tipo de recurso que se está creando. En este
 
 C. **metadata**: Contiene datos que identifican el Deployment, como su nombre.
 
-````yaml
-metadata:
-  name: flask-app-deployment
+    ````yaml
+    metadata:
+    name: flask-app-deployment
+    ```
+
 D. **spec**: Especifica los detalles del Deployment.
+
 - replicas: Define el número de réplicas (pods) que se deben ejecutar para esta aplicación. Aquí está configurado para 2 réplicas.
 - selector: Define cómo seleccionar los pods que son administrados por este Deployment mediante etiquetas.
 - template: Describe el contenido de los pods que se crearán.
@@ -135,7 +138,7 @@ ports:
 - port: 80
 selector:
  app: flask-app
-````
+```
 
 Aplica el deployment:
 
