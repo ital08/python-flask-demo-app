@@ -14,7 +14,7 @@ Este proyecto muestra cómo desplegar una aplicación Flask en AKS, utilizando s
 ### 1. Clonar el repositorio
 
 ```bash
-git clone <URL_DEL_REPOSITORIO>
+git clone https://github.com/ital08/python-flask-demo-app.git
 cd <NOMBRE_DEL_DIRECTORIO>
 ```
 
@@ -28,38 +28,48 @@ docker build -t flask-app .
 
 ```bash
 az login
-az group create --name myResourceGroup --location eastus
+az group create --name <myResourceGroup> --location eastus
 ```
 
 ### 4. Crear un Azure Container Registry (ACR)
 
 ```bash
-az acr create --resource-group myResourceGroup --name myContainerRegistry --sku Basic
+az acr create --resource-group <myResourceGroup> --name <myContainerRegistry> --sku Basic
 ```
 
 ### 5. Iniciar sesión en ACR
 
 ```bash
-az acr login --name myContainerRegistry
+az acr login --name <myContainerRegistry>
 ```
 
 ### 6. Etiquetar y subir la imagen a ACR
 
 ```bash
-docker tag flask-app:latest mycontainerregistry.azurecr.io/flask-app:latest
-docker push mycontainerregistry.azurecr.io/flask-app:latest
+docker tag flask-app:latest <mycontainerregistry>.azurecr.io/flask-app:latest
+docker push <mycontainerregistry>.azurecr.io/flask-app:latest
 ```
 
 ### 7. Crear un clúster de AKS
 
 ```bash
-az aks create --resource-group myResourceGroup --name myAKSCluster --node-count 1 --enable-addons monitoring --generate-ssh-keys
+az aks create --resource-group <myResourceGroup> --name <myAKSCluster> --node-count 1 --enable-addons monitoring --generate-ssh-keys
 ```
+
+- resource-group <myResourceGroup>: Especifica el grupo de recursos de Azure donde se creará el clúster.
+
+- name <myAKSCluster>: Define el nombre del clúster de AKS.
+
+- node-count 1: Establece el número de nodos del clúster. En este caso, se crea un clúster con 1 nodo.
+
+- enable-addons monitoring: Habilita el complemento de monitoreo (Azure Monitor) para el clúster, lo que permite recopilar métricas y registros.
+
+- generate-ssh-keys: Genera automáticamente las claves SSH necesarias para acceder a los nodos del clúster.
 
 ### 8. Obtener credenciales para el clúster de AKS
 
 ```bash
-az aks get-credentials --resource-group myResourceGroup --name myAKSCluster
+az aks get-credentials --resource-group <myResourceGroup> --name <myAKSCluster></myAKSCluster>
 ```
 
 ### 9. Crear un secreto en Kubernetes
