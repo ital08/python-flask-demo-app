@@ -13,6 +13,8 @@ Este proyecto muestra cómo desplegar una aplicación Flask en AKS, utilizando s
 
 ### 1. Clonar el repositorio
 
+[Descargar Git](http://git-scm.com/download/win)
+
 ```bash
 git clone https://github.com/ital08/python-flask-demo-app.git
 cd <NOMBRE_DEL_DIRECTORIO>
