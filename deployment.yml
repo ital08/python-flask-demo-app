@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: flask-app
-          image: <mycontainerregistry>.azurecr.io/flask-app:latest
+          image: mycontainerregistry.azurecr.io/flask-app:latest
           ports:
             - containerPort: 80
 ---
