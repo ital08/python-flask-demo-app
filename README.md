@@ -5,7 +5,7 @@ Este proyecto muestra cómo desplegar una aplicación Flask en AKS, utilizando s
 ## Prerrequisitos
 
 - Azure CLI instalado
-- Docker instalado
+- Docker instalado y en ejecución
 - Una cuenta de Azure
 - Python y pip instalados
 
@@ -21,6 +21,8 @@ cd <NOMBRE_DEL_DIRECTORIO>
 ```
 
 ### 2. Construir la imagen Docker
+
+El comando docker build es utilizado para construir una imagen Docker a partir de un Dockerfile y un contexto de construcción. El contexto de construcción es el directorio actual (. en este caso), que contiene el Dockerfile y cualquier otro archivo necesario para la construcción de la imagen.
 
 ```bash
 docker build -t flask-app .
@@ -51,6 +53,9 @@ az acr login --name <myContainerRegistry>
 docker tag flask-app:latest <mycontainerregistry>.azurecr.io/flask-app:latest
 docker push <mycontainerregistry>.azurecr.io/flask-app:latest
 ```
+
+- "flask-app:latest": Es la imagen local que acabas de construir.
+- "<mycontainerregistry>.azurecr.io/flask-app:latest" : Es la nueva etiqueta que incluye el nombre del registro de contenedores, el nombre del repositorio en ese registro y la versión de la imagen (en este caso, latest). Al etiquetar la imagen con el nombre de nuestro ACR, le estamos indicando a Docker dónde debe almacenar y buscar esta imagen específica en Azure. Esto es crucial porque los registros de contenedores en la nube como ACR requieren una estructura específica para el nombre de la imagen (<nombre_del_registro>.azurecr.io/<nombre_del_repositorio>:<etiqueta>).
 
 ### 7. Crear un clúster de AKS
 
@@ -163,6 +168,7 @@ Crea un archivo deployment.yaml con el siguiente contenido:
 ```bash
 apiVersion: apps/v1
 kind: Deployment
+namespace: dev
 metadata:
 name: flask-app-deployment
 spec:
@@ -180,17 +186,6 @@ containers:
   image: <mycontainerregistry>.azurecr.io/flask-app:latest
   ports:
   - containerPort: 80
-  env:
-  - name: USERNAME
-    valueFrom:
-      secretKeyRef:
-        name: <mysecret>
-        key: username
-  - name: PASSWORD
-    valueFrom:
-      secretKeyRef:
-        name: <mysecret>
-        key: password
 ---
 apiVersion: v1
 kind: Service
@@ -214,4 +209,49 @@ kubectl apply -f deployment.yaml
 
 ```bash
 kubectl get services
+```
+
+### 12. Implementando Secretos
+
+Primero crearemos nuestros secretos dentro de nuestro AKS mediante el siguiente comando:
+
+```bash
+kubectl create secret generic <nombre-del-secreto> \
+  --from-literal=username=<valor-usuario> \
+  --from-literal=password=<valor-contraseña>
+```
+
+Tambien es posible crearlo directamente desde un yaml:
+
+```bash
+apiVersion: v1
+kind: Secret
+metadata:
+  name: mysecret
+type: Opaque
+data:
+  username: <base64-encoded-username>
+  password: <base64-encoded-password>
+```
+
+Y por ultimo modificaremos el yaml de nuestro despliegue para que este consulte y utilice nuestros secretos
+
+```bash
+
+containers:
+- name: flask-app
+  image: <mycontainerregistry>.azurecr.io/flask-app:latest
+  ports:
+  - containerPort: 80
+  env:
+  - name: USERNAME
+    valueFrom:
+      secretKeyRef:
+        name: <mysecret>
+        key: username
+  - name: PASSWORD
+    valueFrom:
+      secretKeyRef:
+        name: <mysecret>
+        key: password
 ```

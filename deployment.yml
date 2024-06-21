@@ -14,20 +14,9 @@ spec:
     spec:
       containers:
         - name: flask-app
-          image: mycontainerregistry.azurecr.io/flask-app:latest
+          image: <mycontainerregistry>.azurecr.io/flask-app:latest
           ports:
             - containerPort: 80
-          env:
-            - name: USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: mysecret
-                  key: username
-            - name: PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: mysecret
-                  key: password
 ---
 apiVersion: v1
 kind: Service
